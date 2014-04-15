@@ -1,5 +1,6 @@
-module Revert
-  def self.run(arguments, perforce)
+module PerforceTools
+  module Revert
+    def self.run(arguments, perforce)
       args = []
       args.push('-w') if arguments[:delete_added_files]
       args.push('-c')
@@ -7,12 +8,13 @@ module Revert
       args.push('//...')
 
       perforce.run_revert(args)
-  end
+    end
 
-  def self.set_options(opts)
-    opts.set do
-      arg :delete_added_files, 'Delete added files.', :short => '-d'
-      arg :changelist, 'Changelist number.', :short => '-c', :type => :int, :required => true
+    def self.set_options(opts)
+      opts.set do
+        arg :delete_added_files, 'Delete added files.', :short => '-d'
+        arg :changelist, 'Changelist number.', :short => '-c', :type => :int, :required => true
+      end
     end
   end
 end

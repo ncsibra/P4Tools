@@ -1,5 +1,7 @@
-class DummyPerforce
-  def method_missing(m, *args)
-    "You called the '#{m}' method with arguments: #{args}"
+module PerforceTools
+  class DummyPerforce
+    def method_missing(m, *args)
+      "You called the '#{m}' method with arguments: #{args}"
+    end
   end
 end

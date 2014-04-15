@@ -6,6 +6,10 @@ require_relative 'perforce_tools/perforce/dummy_perforce'
 require_relative 'perforce_tools/utils/window_manager'
 
 module PerforceTools
+  def self.run_with_arguments(args)
+
+  end
+
   def self.create_perforce_object(dry_run)
     dry_run ? DummyPerforce.new : P4.new
   end
