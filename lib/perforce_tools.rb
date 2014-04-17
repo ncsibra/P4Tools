@@ -6,8 +6,20 @@ require_relative 'perforce_tools/perforce/dummy_perforce'
 require_relative 'perforce_tools/utils/window_manager'
 
 module PerforceTools
-  def self.run_with_arguments(args)
+  def self.run_with_arguments(args=ARGV)
+    arguments = CommandParser.new(args).parse
+    global_arguments = arguments.delete(PerforceTools)
 
+    setup_perforce_config(global_arguments)
+    perforce = create_perforce_object(global_arguments[:dry_run])
+    perforce.connect
+
+    begin
+      run_commands(arguments, perforce)
+      WindowManager.refresh if global_arguments[:refresh]
+    ensure
+      perforce.disconnect
+    end
   end
 
   def self.create_perforce_object(dry_run)
@@ -38,19 +50,6 @@ module PerforceTools
 
 
   if __FILE__ == $PROGRAM_NAME
-    arguments = CommandParser.new.parse
-    global_arguments = arguments.delete(PerforceTools)
-
-    setup_perforce_config(global_arguments)
-    perforce = create_perforce_object(global_arguments[:dry_run])
-    perforce.connect
-
-    begin
-      run_commands(arguments, perforce)
-      WindowManager.refresh if global_arguments[:refresh]
-    ensure
-      perforce.disconnect
-    end
-
+    run_with_arguments
   end
 end
