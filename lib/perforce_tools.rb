@@ -8,35 +8,12 @@ require_relative 'perforce_tools/utils/window_manager'
 
 module PerforceTools
 
-  class << self
-    private
-
-    def create_perforce_object(dry_run)
-      @perforce = dry_run ? DummyPerforce.new : P4.new
-    end
-
-    def run_commands(commands)
-      commands.each_pair do |command, arguments|
-        command.run(arguments)
-      end
-    end
-
-    def setup_perforce_config(arguments)
-      if arguments[:p4config]
-        ENV['P4CONFIG'] = arguments[:p4config]
-      elsif ENV['P4CONFIG'].nil?
-        ENV['P4CONFIG'] = CONFIG_ROOT + '/p4.ini'
-      end
-    end
-  end
-
   def self.run(args=ARGV)
     arguments = CommandParser.new(args).parse
     global_arguments = arguments.delete(PerforceTools)
 
     setup_perforce_config(global_arguments)
-    create_perforce_object(global_arguments[:dry_run])
-    @perforce.connect
+    create_perforce_connection(global_arguments[:dry_run])
 
     begin
       run_commands(arguments)
@@ -57,6 +34,31 @@ module PerforceTools
   def self.connection
     @perforce
   end
+
+
+  class << self
+    private
+
+    def create_perforce_connection(dry_run)
+      @perforce = dry_run ? DummyPerforce.new : P4.new
+      @perforce.connect
+    end
+
+    def run_commands(commands)
+      commands.each_pair do |command, arguments|
+        command.run(arguments)
+      end
+    end
+
+    def setup_perforce_config(arguments)
+      if arguments[:p4config]
+        ENV['P4CONFIG'] = arguments[:p4config]
+      elsif ENV['P4CONFIG'].nil?
+        ENV['P4CONFIG'] = CONFIG_ROOT + '/p4.ini'
+      end
+    end
+  end
+
 
   if __FILE__ == $PROGRAM_NAME
     run
