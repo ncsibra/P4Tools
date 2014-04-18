@@ -6,7 +6,7 @@ require_relative 'perforce_tools/perforce/dummy_perforce'
 require_relative 'perforce_tools/utils/window_manager'
 
 module PerforceTools
-  def self.run_with_arguments(args=ARGV)
+  def self.run(args=ARGV)
     arguments = CommandParser.new(args).parse
     global_arguments = arguments.delete(PerforceTools)
 
@@ -50,6 +50,6 @@ module PerforceTools
 
 
   if __FILE__ == $PROGRAM_NAME
-    run_with_arguments
+     run
   end
 end
