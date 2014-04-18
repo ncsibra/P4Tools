@@ -1,6 +1,8 @@
 module PerforceTools
   module Revert
-    def self.run(arguments, perforce)
+    def self.run(arguments)
+      perforce = PerforceTools.connection
+
       args = []
       args.push('-w') if arguments[:delete_added_files]
       args.push('-c')

@@ -26,10 +26,11 @@ module PerforceTools
     end
 
     def parse_arguments(command_module)
-      options = CommandOptions.new
+      parser = Trollop::Parser.new
+      options = CommandOptions.new(parser)
       command_module.set_options(options)
-      parser = options.instance_eval { get_parser }
 
+      parser.stop_on SUB_COMMANDS
       Trollop.with_standard_exception_handling(parser) { parser.parse @raw_args }
     end
 

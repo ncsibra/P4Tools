@@ -6,4 +6,5 @@ SUB_COMMANDS = Dir[COMMANDS_ROOT + '/*.rb'].collect { |file|
                 File.basename(file, '.rb')
               }
 
+
 $LOAD_PATH.unshift(CUSTOM_COMMANDS_ROOT, COMMANDS_ROOT)

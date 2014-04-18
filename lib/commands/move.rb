@@ -1,6 +1,7 @@
 module PerforceTools
   module Move
-    def self.run(arguments, perforce)
+    def self.run(arguments)
+      perforce = PerforceTools.connection
       changelist = arguments[:changelist]
 
       if arguments[:shelve]

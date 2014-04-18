@@ -1,8 +1,8 @@
 module PerforceTools
   class CommandOptions
 
-    def initialize
-      @parser = Trollop::Parser.new
+    def initialize(parser)
+      @parser = parser
     end
 
     def help(text)
@@ -15,12 +15,6 @@ module PerforceTools
 
     def set(&opts)
       self.instance_eval &opts
-    end
-
-    private
-    def get_parser
-      @parser.stop_on SUB_COMMANDS
-      @parser
     end
 
   end
