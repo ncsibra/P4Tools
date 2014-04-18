@@ -26,17 +26,16 @@ module PerforceTools
     end
 
     def parse_arguments(command_module)
-      parser = Trollop::Parser.new
-      options = CommandOptions.new(parser)
+      options = CommandOptions.new
       command_module.set_options(options)
-      parser.stop_on SUB_COMMANDS
+      parser = options.instance_eval { get_parser }
 
       Trollop.with_standard_exception_handling(parser) { parser.parse @raw_args }
     end
 
     def load_module_for_command(command)
       require command
-      eval("PerforceTools::#{Utils.classify(command)}")
+      PerforceTools.const_get(Utils.classify(command))
     end
 
   end
