@@ -4,11 +4,13 @@ require_relative 'command_options'
 module PerforceTools
   class CommandParser
 
+    # @param [Array<String>] args
     def initialize(args)
       @raw_args = args
       @parsed_args = {}
     end
 
+    # @return [Hash<Module, Hash<Symbol, Object>>]
     def parse
       @parsed_args[PerforceTools] = parse_arguments(PerforceTools)
       parse_commands
@@ -18,6 +20,7 @@ module PerforceTools
 
     private
 
+    # @return [void]
     def parse_commands
       while command = @raw_args.shift
         command_module = load_module_for_command(command)
@@ -25,6 +28,8 @@ module PerforceTools
       end
     end
 
+    # @param [Module] command_module
+    # @return [Hash<Symbol, Object>]
     def parse_arguments(command_module)
       parser = Trollop::Parser.new
       options = CommandOptions.new(parser)
@@ -34,6 +39,10 @@ module PerforceTools
       Trollop.with_standard_exception_handling(parser) { parser.parse @raw_args }
     end
 
+
+
+    # @param [String] command
+    # @return [Module]
     def load_module_for_command(command)
       require command
       PerforceTools.const_get(Utils.classify(command))
