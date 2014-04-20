@@ -12,13 +12,18 @@ module PerforceTools
 
     # @return [Hash<Module, Hash<Symbol, Object>>]
     def parse
-      @parsed_args[PerforceTools] = parse_arguments(PerforceTools)
+      parse_global_arguments
       parse_commands
 
       @parsed_args
     end
 
     private
+
+    # @return [void]
+    def parse_global_arguments
+      @parsed_args[PerforceTools] = parse_arguments(PerforceTools)
+    end
 
     # @return [void]
     def parse_commands

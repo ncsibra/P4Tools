@@ -3,13 +3,7 @@ module PerforceTools
     def self.run(arguments)
       perforce = PerforceTools.connection
 
-      args = []
-      args.push('-w') if arguments[:delete_added_files]
-      args.push('-c')
-      args.push(arguments[:changelist])
-      args.push('//...')
-
-      perforce.run_revert(args)
+      perforce.run_revert(%W{ #{arguments[:delete_added_files]} -c #{arguments[:changelist]} //... })
     end
 
     def self.set_options(opts)

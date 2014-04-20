@@ -1,14 +1,16 @@
 module PerforceTools
   module Move
+    extend CommandUtils
+
     def self.run(arguments)
       perforce = PerforceTools.connection
       changelist = arguments[:changelist]
 
-      if arguments[:shelve]
+      if arguments[:shelve] && !empty_changelist?(changelist)
         perforce.run_shelve('-f', '-c', changelist)
       end
 
-      if arguments[:revert]
+      if arguments[:revert] && all_files_shelved?(changelist)
         perforce.run_revert('-w', '-c', changelist, '//...')
       end
 
