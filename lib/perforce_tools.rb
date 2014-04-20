@@ -1,4 +1,3 @@
-$start = Time.now
 require 'P4'
 require_relative 'perforce_tools/environment'
 require_relative 'perforce_tools/utils/utils'
@@ -71,7 +70,5 @@ module PerforceTools
 
   if __FILE__ == $PROGRAM_NAME
     run
-    endt = Time.now
-    p (endt - $start) * 1000
   end
 end
