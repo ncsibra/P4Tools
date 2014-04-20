@@ -5,12 +5,13 @@ module PerforceTools
     def self.run(arguments)
       perforce = PerforceTools.connection
       changelist = arguments[:changelist]
+      is_not_empty = empty_changelist?(changelist)
 
-      if arguments[:shelve] && !empty_changelist?(changelist)
+      if arguments[:shelve] && is_not_empty
         perforce.run_shelve('-f', '-c', changelist)
       end
 
-      if arguments[:revert] && all_files_shelved?(changelist)
+      if arguments[:revert] && is_not_empty && all_files_shelved?(changelist, true)
         perforce.run_revert('-w', '-c', changelist, '//...')
       end
 
