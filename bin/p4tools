@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'p4_tools'
+
+P4Tools.run(ARGV)
