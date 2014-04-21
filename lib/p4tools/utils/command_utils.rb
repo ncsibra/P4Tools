@@ -14,8 +14,8 @@ module P4Tools
     # @param [Integer] changelist
     # @return [Boolean]
     def empty_changelist?(changelist)
-      perforce = P4Tools.connection
-      opened_files = perforce.run(%W{ describe -s #{changelist} })[0]['depotFile']
+      p4 = P4Tools.connection
+      opened_files = p4.run(%W{ describe -s #{changelist} })[0]['depotFile']
       opened_files.nil?
     end
 
@@ -23,14 +23,14 @@ module P4Tools
     # @return [String]
     # The number of the new changelist
     def create_new_changelist(description='Created with P4Tools.')
-      perforce = P4Tools.connection
+      p4 = P4Tools.connection
 
-      perforce.input = {
+      p4.input = {
           'Change' => 'new',
           'Description' => description,
       }
 
-      confirmation = @perforce.run('change', '-i').first
+      confirmation = p4.run('change', '-i').first
       confirmation.match(/\d+/)[0]
     end
   end

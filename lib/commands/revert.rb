@@ -1,9 +1,9 @@
 module P4Tools
   module Revert
     def self.run(arguments)
-      perforce = P4Tools.connection
+      p4 = P4Tools.connection
 
-      perforce.run_revert(%W{ #{arguments[:delete_added_files]} -c #{arguments[:changelist]} //... })
+      p4.run_revert(%W{ #{arguments[:delete_added_files]} -c #{arguments[:changelist]} //... })
     end
 
     def self.set_options(opts)

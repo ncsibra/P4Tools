@@ -20,7 +20,7 @@ module P4Tools
       run_commands(arguments)
       WindowManager.refresh if global_arguments[:refresh]
     ensure
-      @perforce.disconnect
+      @p4.disconnect
     end
   end
 
@@ -35,7 +35,7 @@ module P4Tools
 
   # @return [P4]
   def self.connection
-    @perforce
+    @p4
   end
 
 
@@ -44,8 +44,8 @@ module P4Tools
 
     # @return [void]
     def create_perforce_connection
-      @perforce = P4.new
-      @perforce.connect
+      @p4 = P4.new
+      @p4.connect
     end
 
     # @param [Hash<Module, Hash<Symbol, Object>>] commands

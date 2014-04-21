@@ -3,19 +3,19 @@ module P4Tools
     extend CommandUtils
 
     def self.run(arguments)
-      perforce = P4Tools.connection
+      p4 = P4Tools.connection
       changelist = arguments[:changelist]
       is_not_empty = !empty_changelist?(changelist)
 
       if arguments[:shelve] && is_not_empty
-        perforce.run_shelve('-f', '-c', changelist)
+        p4.run_shelve('-f', '-c', changelist)
       end
 
       if arguments[:revert] && is_not_empty && all_files_shelved?(changelist, true)
-        perforce.run_revert('-w', '-c', changelist, '//...')
+        p4.run_revert('-w', '-c', changelist, '//...')
       end
 
-      changelist_spec = perforce.fetch_change(changelist)
+      changelist_spec = p4.fetch_change(changelist)
       if arguments[:switch]
         workspaces = arguments[:switch]
 
@@ -34,7 +34,7 @@ module P4Tools
       end
 
       changelist_spec['Client'] = new_workspace
-      perforce.save_change(changelist_spec)
+      p4.save_change(changelist_spec)
     end
 
     def self.set_options(opts)

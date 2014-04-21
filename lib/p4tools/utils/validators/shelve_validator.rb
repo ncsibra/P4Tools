@@ -8,9 +8,9 @@ module P4Tools
 
     # @return [Boolean]
     def valid?
-      @perforce = P4Tools.connection
-      @opened_files = @perforce.run(%W{ describe -s #{@changelist} })[0]['depotFile']
-      @shelved_files = @perforce.run(%W{ describe -s -S #{@changelist} })[0]['depotFile']
+      @p4 = P4Tools.connection
+      @opened_files = @p4.run(%W{ describe -s #{@changelist} })[0]['depotFile']
+      @shelved_files = @p4.run(%W{ describe -s -S #{@changelist} })[0]['depotFile']
 
       @opened_files.nil? || (!@shelved_files.nil? && all_opened_files_shelved? && files_are_identical?)
     end
@@ -28,7 +28,7 @@ module P4Tools
         intersection = @shelved_files & @opened_files
 
         intersection.each do |file|
-          diff = @perforce.run(%W{ diff -Od #{file}@=#{@changelist} })
+          diff = @p4.run(%W{ diff -Od #{file}@=#{@changelist} })
           return false unless diff.empty?
         end
       end
