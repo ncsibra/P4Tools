@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
   gem.homepage = 'https://github.com/ncsibra/P4Tools'
   gem.summary = 'Simple command line tool to run custom perforce actions.'
   gem.description = %q{Simple command line tool to run custom perforce actions}
-  gem.files = `git ls-files`.split($/).delete_if {|file| file =~ %r{^gem/}}
+  gem.files = `git ls-files`.split($/).delete_if {|file| file =~ %r{^gem/|^lib/commands/custom/}}
   gem.executables   = gem.files.grep(%r{^bin/}) { |f| File.basename(f) }
   gem.require_paths = ["lib"]
   
