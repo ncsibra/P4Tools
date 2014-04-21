@@ -17,7 +17,7 @@ module P4Tools
 
       def initialize(args)
         @files = args[:files]
-        @shelve_changelist = args[:changelist] || create_new_changelist("Shelve container for files: #{@files.to_s}")
+        @shelve_changelist = args[:changelist] || create_new_changelist("Shelve container for files:\n\n#{@files.join("\n")}")
         @p4 = P4Tools.connection
       end
 
