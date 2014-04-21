@@ -17,15 +17,19 @@ module P4Tools
 
       def initialize(args)
         @files = args[:files]
-        @changelist = args[:changelist] || create_new_changelist("Shelve container for #{@files.to_s}")
+        @shelve_changelist = args[:changelist] || create_new_changelist("Shelve container for files: #{@files.to_s}")
       end
 
       def shelve
-
+        current_changelist = get_current(@files.first)
       end
+
 
       private
 
+      def get_current(file)
+
+      end
 
 
     end
