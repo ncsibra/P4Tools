@@ -19,5 +19,19 @@ module PerforceTools
       opened_files.nil?
     end
 
+    # @param [String] description
+    # @return [String]
+    # The number of the new changelist
+    def create_new_changelist(description='Created with PerforceTools.')
+      perforce = PerforceTools.connection
+
+      perforce.input = {
+          'Change' => 'new',
+          'Description' => description,
+      }
+
+      confirmation = @perforce.run('change', '-i').first
+      confirmation.match(/\d+/)[0]
+    end
   end
 end
