@@ -1,4 +1,4 @@
-module PerforceTools
+module P4Tools
   Utils.require_original_module __FILE__
 
   module Revert

@@ -1,4 +1,4 @@
-module PerforceTools
+module P4Tools
   class ShelveValidator
 
     def initialize(changelist, check_diff)
@@ -8,7 +8,7 @@ module PerforceTools
 
     # @return [Boolean]
     def valid?
-      @perforce = PerforceTools.connection
+      @perforce = P4Tools.connection
       @opened_files = @perforce.run(%W{ describe -s #{@changelist} })[0]['depotFile']
       @shelved_files = @perforce.run(%W{ describe -s -S #{@changelist} })[0]['depotFile']
 

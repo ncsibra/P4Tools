@@ -1,9 +1,9 @@
-module PerforceTools
+module P4Tools
   module Move
     extend CommandUtils
 
     def self.run(arguments)
-      perforce = PerforceTools.connection
+      perforce = P4Tools.connection
       changelist = arguments[:changelist]
       is_not_empty = !empty_changelist?(changelist)
 

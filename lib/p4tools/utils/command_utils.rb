@@ -1,6 +1,6 @@
 require_relative 'validators/shelve_validator'
 
-module PerforceTools
+module P4Tools
   module CommandUtils
 
     # @param [Integer] changelist
@@ -14,7 +14,7 @@ module PerforceTools
     # @param [Integer] changelist
     # @return [Boolean]
     def empty_changelist?(changelist)
-      perforce = PerforceTools.connection
+      perforce = P4Tools.connection
       opened_files = perforce.run(%W{ describe -s #{changelist} })[0]['depotFile']
       opened_files.nil?
     end
@@ -22,8 +22,8 @@ module PerforceTools
     # @param [String] description
     # @return [String]
     # The number of the new changelist
-    def create_new_changelist(description='Created with PerforceTools.')
-      perforce = PerforceTools.connection
+    def create_new_changelist(description='Created with P4Tools.')
+      perforce = P4Tools.connection
 
       perforce.input = {
           'Change' => 'new',

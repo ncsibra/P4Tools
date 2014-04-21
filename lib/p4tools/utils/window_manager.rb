@@ -1,4 +1,4 @@
-module PerforceTools
+module P4Tools
   module WindowManager
     def self.refresh
       require 'rautomation'

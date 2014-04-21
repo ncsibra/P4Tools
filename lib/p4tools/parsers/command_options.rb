@@ -1,4 +1,4 @@
-module PerforceTools
+module P4Tools
   class CommandOptions
 
     def initialize(parser)

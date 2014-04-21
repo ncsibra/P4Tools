@@ -1,7 +1,7 @@
 require_relative 'trollop'
 require_relative 'command_options'
 
-module PerforceTools
+module P4Tools
   class CommandParser
 
     # @param [Array<String>] args
@@ -22,7 +22,7 @@ module PerforceTools
 
     # @return [void]
     def parse_global_arguments
-      @parsed_args[PerforceTools] = parse_arguments(PerforceTools)
+      @parsed_args[P4Tools] = parse_arguments(P4Tools)
     end
 
     # @return [void]
@@ -50,7 +50,7 @@ module PerforceTools
     # @return [Module]
     def load_module_for_command(command)
       require command
-      PerforceTools.const_get(Utils.classify(command))
+      P4Tools.const_get(Utils.classify(command))
     end
 
   end

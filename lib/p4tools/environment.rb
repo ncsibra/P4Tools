@@ -1,4 +1,4 @@
-# The absolute path of the main script(perforce_tools.rb)
+# The absolute path of the main script(p4_tools.rb)
 ROOT = File.expand_path('..', File.dirname(__FILE__))
 # The absolute path of the folder which contains the command files
 COMMANDS_ROOT = ROOT + '/commands'

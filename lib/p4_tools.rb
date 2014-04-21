@@ -1,17 +1,17 @@
 require 'P4'
-require_relative 'perforce_tools/environment'
-require_relative 'perforce_tools/utils/utils'
-require_relative 'perforce_tools/utils/command_utils'
-require_relative 'perforce_tools/parsers/command_parser'
-require_relative 'perforce_tools/utils/window_manager'
+require_relative 'p4tools/environment'
+require_relative 'p4tools/utils/utils'
+require_relative 'p4tools/utils/command_utils'
+require_relative 'p4tools/parsers/command_parser'
+require_relative 'p4tools/utils/window_manager'
 
-module PerforceTools
+module P4Tools
 
   # @param [Array<String>] args
   # @return [void]
   def self.run(args=ARGV)
     arguments = CommandParser.new(args).parse
-    global_arguments = arguments.delete(PerforceTools)
+    global_arguments = arguments.delete(P4Tools)
 
     setup_perforce_config(global_arguments[:p4config])
     create_perforce_connection

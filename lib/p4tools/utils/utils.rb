@@ -1,4 +1,4 @@
-module PerforceTools
+module P4Tools
   module Utils
     # @param [String] string
     # @return [String]
