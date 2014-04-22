@@ -8,6 +8,10 @@ module P4Tools
 
     def self.set_options(opts)
       opts.set do
+        help 'Shelve all files to the given changelist or create a new one if not provided.'
+        help ''
+        help 'Options:'
+        help ''
         arg :files, 'The absolute path of the files to shelve.', :short => '-f', :type => :strings, :required => true
         arg :changelist, 'The changelist number to shelve, if not given, then create a new one.', :short => '-c', :type => :int
       end

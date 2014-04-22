@@ -16,6 +16,10 @@ module P4Tools
 
     def self.set_options(opts)
       opts.set do
+        help 'Revert the given files or all file in the changelist and optionally delete the added files from the disk too.'
+        help ''
+        help 'Options:'
+        help ''
         arg :delete_added_files, 'Delete added files.', :short => '-d'
         arg :changelist, 'Changelist number.', :short => '-c', :type => :int
         arg :files, 'The absolute path of the files to delete.', :short => '-f', :type => :strings

@@ -32,7 +32,8 @@ module P4Tools
       help "Available subcommands are:\n  #{SUB_COMMANDS.join("\n  ")}"
       help "Please check the help page of the command for more information."
       help ""
-      help "Options:"
+      help "Global options:"
+      help ""
       arg :refresh, "Send a refresh keystroke(F5) to the Visual Client.", :short => '-r'
       arg :p4config, "Absolute path of the P4CONFIG file.", :short => '-p', :type => :string
     end

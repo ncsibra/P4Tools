@@ -8,9 +8,14 @@ module P4Tools
 
     def self.set_options(opts)
       opts.set do
-        arg :workspace, 'Name of the new workspace.', :short => '-w', :type => :string
+        help 'Move a pending changelist from one workspace to another, optionally shelve and delete them before.'
+        help 'The changelist need to be empty to move(only shelved files allowed)!'
+        help ''
+        help 'Options:'
+        help ''
+        arg :workspace, "Name of the new workspace. If 'switch' option provided, this will be ignored.", :short => '-w', :type => :string
         arg :switch, 'Switch between workspaces, only 2 workspace name allowed.', :short => '-i', :type => :strings
-        arg :changelist, 'Changelist number.', :short => '-c', :type => :int, :required => true
+        arg :changelist, 'Changelist number to move.', :short => '-c', :type => :int, :required => true
         arg :revert, 'Revert before move.', :short => '-r'
         arg :shelve, 'Shelve before move.', :short => '-s'
       end
