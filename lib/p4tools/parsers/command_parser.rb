@@ -38,10 +38,14 @@ module P4Tools
     def parse_arguments(command_module)
       parser = Trollop::Parser.new
       options = CommandOptions.new(parser)
-      command_module.set_options(options)
 
+      command_module.set_options(options)
       parser.stop_on SUB_COMMANDS
-      Trollop.with_standard_exception_handling(parser) { parser.parse @raw_args }
+
+      Trollop.with_standard_exception_handling(parser) {
+        raise Trollop::HelpNeeded if ARGV.empty? && options.show_help
+        parser.parse @raw_args
+      }
     end
 
 

@@ -1,8 +1,11 @@
 module P4Tools
   class CommandOptions
 
+    attr_reader :show_help
+
     def initialize(parser)
       @parser = parser
+      @show_help = true
     end
 
     # @param [String] text
@@ -15,6 +18,10 @@ module P4Tools
     # @param [Hash<Symbol, Object>] options
     def arg(name, desc='', options={})
       @parser.opt(name, desc, options)
+    end
+
+    def allow_empty_args
+      @show_help = false
     end
 
     def set(&opts)
