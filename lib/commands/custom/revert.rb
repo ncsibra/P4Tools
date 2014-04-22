@@ -1,7 +1,7 @@
 module P4Tools
-  Utils.require_original_module __FILE__
+  Utils.require_original __FILE__
 
-  module Revert
+  class Revert
     def self.run(arguments)
       p "dummy revert #{arguments}"
     end
