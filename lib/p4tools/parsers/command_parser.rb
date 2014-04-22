@@ -1,4 +1,4 @@
-require_relative 'trollop'
+require_relative 'trollop_custom'
 require_relative 'command_options'
 
 module P4Tools
