@@ -1,6 +1,3 @@
-require_relative 'trollop_custom'
-require_relative 'command_options'
-
 module P4Tools
   class CommandParser
 
@@ -28,8 +25,12 @@ module P4Tools
     # @return [void]
     def parse_commands
       while command = @raw_args.shift
-        command_module = load_module_for_command(command)
-        @parsed_args[command_module] = parse_arguments(command_module)
+        if command == P4_COMMAND
+          @parsed_args[P4Delegate] = parse_p4_arguments
+        else
+          command_module = load_module_for_command(command)
+          @parsed_args[command_module] = parse_arguments(command_module)
+        end
       end
     end
 
@@ -48,7 +49,20 @@ module P4Tools
       }
     end
 
+    def parse_p4_arguments
+      args = []
+      i = 0
+      current = @raw_args[i]
 
+      begin
+        i += 1
+        args.push(current)
+        current = @raw_args[i]
+      end while !SUB_COMMANDS.include?(current) && i < @raw_args.length
+
+      @raw_args = @raw_args[i .. -1]
+      {:raw => args}
+    end
 
     # @param [String] command
     # @return [Module]
