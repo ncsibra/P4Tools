@@ -28,6 +28,11 @@ module P4Tools
   # @return [void]
   def self.set_options(opts)
     opts.set do
+      help "Simple command line tool to run custom perforce actions through subcommands."
+      help "Available subcommands are:\n  #{SUB_COMMANDS.join("\n  ")}"
+      help "Please check the help page of the command for more information."
+      help ""
+      help "Options:"
       arg :refresh, "Send a refresh keystroke(F5) to the Visual Client.", :short => '-r'
       arg :p4config, "Absolute path of the P4CONFIG file.", :short => '-p', :type => :string
     end

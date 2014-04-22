@@ -460,7 +460,7 @@ module Trollop
         end
 
         spec = @specs[opt]
-        stream.printf "  %#{leftcol_width}s:   ", left[opt]
+        stream.printf "%s\n   ", left[opt]
         desc = spec[:desc] + begin
           default_s = case spec[:default]
                         when $stdout; "<stdout>"
