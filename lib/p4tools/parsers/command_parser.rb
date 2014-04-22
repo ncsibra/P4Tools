@@ -4,10 +4,10 @@ module P4Tools
     # @param [Array<String>] args
     def initialize(args)
       @raw_args = args
-      @parsed_args = {}
+      @parsed_args = []
     end
 
-    # @return [Hash<Module, Hash<Symbol, Object>>]
+    # @return [Array<CommandEntry>]
     def parse
       parse_global_arguments
       parse_commands
@@ -19,17 +19,20 @@ module P4Tools
 
     # @return [void]
     def parse_global_arguments
-      @parsed_args[P4Tools] = parse_arguments(P4Tools)
+      entry = CommandEntry.new(P4Tools, parse_arguments(P4Tools))
+      @parsed_args.push(entry)
     end
 
     # @return [void]
     def parse_commands
       while command = @raw_args.shift
         if command == P4_COMMAND
-          @parsed_args[P4Delegate] = parse_p4_arguments
+          entry = CommandEntry.new(P4Delegate, parse_p4_arguments)
+          @parsed_args.push(entry)
         else
           command_module = load_module_for_command(command)
-          @parsed_args[command_module] = parse_arguments(command_module)
+          entry = CommandEntry.new(command_module, parse_arguments(command_module))
+          @parsed_args.push(entry)
         end
       end
     end

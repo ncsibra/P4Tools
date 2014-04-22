@@ -7,20 +7,21 @@ require_relative 'p4tools/utils/window_manager'
 require_relative 'p4tools/parsers/command_parser'
 require_relative 'p4tools/parsers/trollop_custom'
 require_relative 'p4tools/parsers/command_options'
+require_relative 'p4tools/parsers/command_entry'
 
 module P4Tools
 
   # @param [Array<String>] args
   # @return [void]
   def self.run(args=ARGV)
-    arguments = CommandParser.new(args).parse
-    global_arguments = arguments.delete(P4Tools)
+    entries = CommandParser.new(args).parse
+    global_arguments = entries.shift.arguments
 
     setup_perforce_config(global_arguments[:p4config])
     create_perforce_connection
 
     begin
-      run_commands(arguments)
+      run_commands(entries)
       WindowManager.refresh if global_arguments[:refresh]
     ensure
       @p4.disconnect
@@ -60,8 +61,11 @@ module P4Tools
 
     # @param [Hash<Module, Hash<Symbol, Object>>] commands
     # @return [void]
-    def run_commands(commands)
-      commands.each_pair do |command, arguments|
+    def run_commands(entries)
+      entries.each do |entry|
+        command = entry.command
+        arguments = entry.arguments
+
         command.run(arguments)
       end
     end
