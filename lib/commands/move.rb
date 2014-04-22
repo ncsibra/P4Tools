@@ -1,40 +1,9 @@
 module P4Tools
-  module Move
-    extend CommandUtils
+  class Move
+    include CommandUtils
 
     def self.run(arguments)
-      p4 = P4Tools.connection
-      changelist = arguments[:changelist]
-      is_not_empty = !empty_changelist?(changelist)
-
-      if arguments[:shelve] && is_not_empty
-        p4.run_shelve('-f', '-c', changelist)
-      end
-
-      if arguments[:revert] && is_not_empty && all_files_shelved?(changelist, true)
-        p4.run_revert('-w', '-c', changelist, '//...')
-      end
-
-      changelist_spec = p4.fetch_change(changelist)
-      if arguments[:switch]
-        workspaces = arguments[:switch]
-
-        if workspaces.length != 2
-          raise(ArgumentError, 'The switch parameter need to contains 2 workspace names exactly!')
-        end
-
-        current =  changelist_spec['Client']
-        unless workspaces.delete(current)
-          raise(ArgumentError, "The switch parameter does not contains the currently active workspace: #{current}!")
-        end
-
-        new_workspace = workspaces[0]
-      else
-        new_workspace = arguments[:workspace]
-      end
-
-      changelist_spec['Client'] = new_workspace
-      p4.save_change(changelist_spec)
+      Move.new(arguments).run
     end
 
     def self.set_options(opts)
@@ -44,6 +13,62 @@ module P4Tools
         arg :changelist, 'Changelist number.', :short => '-c', :type => :int, :required => true
         arg :revert, 'Revert before move.', :short => '-r'
         arg :shelve, 'Shelve before move.', :short => '-s'
+      end
+    end
+
+
+    def initialize(args)
+      @args = args
+      @p4 = P4Tools.connection
+      @changelist = @args[:changelist]
+      @is_not_empty = !empty_changelist?(@changelist)
+    end
+
+    def run
+      shelve
+      revert
+
+      changelist_spec = @p4.fetch_change(@changelist)
+      changelist_spec['Client'] = get_workspace(changelist_spec)
+      @p4.save_change(changelist_spec)
+    end
+
+
+    private
+
+    def shelve
+      if @args[:shelve] && @is_not_empty
+        @p4.run_shelve('-f', '-c', @changelist)
+      end
+    end
+
+    def revert
+      if @args[:revert] && @is_not_empty && all_files_shelved?(@changelist, true)
+        @p4.run_revert('-w', '-c', @changelist, '//...')
+      end
+    end
+
+    def get_workspace(changelist_spec)
+      if @args[:switch]
+        current = changelist_spec['Client']
+        workspaces = @args[:switch]
+
+        validate_workspaces(workspaces, current)
+
+        workspaces.delete(current)
+        workspaces.first
+      else
+        @args[:workspace]
+      end
+    end
+
+    def validate_workspaces(workspaces, current)
+      if workspaces.length != 2
+        raise(ArgumentError, 'The switch parameter need to contains 2 workspace names exactly!')
+      end
+
+      unless workspaces.include?(current)
+        raise(ArgumentError, "The switch parameter does not contains the currently active workspace: #{current}!")
       end
     end
   end
