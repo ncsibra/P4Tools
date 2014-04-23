@@ -24,16 +24,14 @@ module P4Tools
 
     # @return [Boolean]
     def files_are_identical?
-      if @check_diff
-        intersection = @shelved_files & @opened_files
+      identical = true
 
-        intersection.each do |file|
-          diff = @p4.run(%W{ diff -Od #{file}@=#{@changelist} })
-          return false unless diff.empty?
-        end
+      if @check_diff
+        shelve_revisions = @opened_files.map { |file| file + "@=#{@changelist}" }
+        identical = @p4.run_diff('-Od', *shelve_revisions).empty?
       end
 
-      true
+      identical
     end
   end
 end
