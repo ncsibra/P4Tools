@@ -3,7 +3,6 @@ require_relative 'p4tools/environment'
 require_relative 'p4tools/p4_delegate'
 require_relative 'p4tools/utils/utils'
 require_relative 'p4tools/utils/command_utils'
-require_relative 'p4tools/utils/window_manager'
 require_relative 'p4tools/parsers/command_parser'
 require_relative 'p4tools/parsers/trollop_custom'
 require_relative 'p4tools/parsers/command_options'
@@ -22,7 +21,6 @@ module P4Tools
 
     begin
       run_commands(entries)
-      WindowManager.refresh if global_arguments[:refresh]
     ensure
       @p4.disconnect
     end
@@ -39,7 +37,6 @@ module P4Tools
       help ''
       help 'Global options:'
       help ''
-      arg :refresh, 'Send a refresh keystroke(F5) to the Visual Client.', :short => '-r'
       arg :p4config, 'Absolute path of the P4CONFIG file.', :short => '-p', :type => :string
     end
   end
