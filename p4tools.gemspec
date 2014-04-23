@@ -1,6 +1,6 @@
 Gem::Specification.new do |gem|
   gem.name               = 'p4tools'
-  gem.version            = '0.1.1'
+  gem.version            = '0.1.2'
 
   gem.author = ['Norbert Csibra']
   gem.email    = 'napispam@gmail.com'
