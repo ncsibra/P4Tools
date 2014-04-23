@@ -15,7 +15,7 @@ module P4Tools
         help ''
         arg :workspace, "Name of the new workspace. If 'switch' option provided, this will be ignored.", :short => '-w', :type => :string
         arg :switch, 'Switch between workspaces, only 2 workspace name allowed.', :short => '-i', :type => :strings
-        arg :changelist, 'Changelist number to move.', :short => '-c', :type => :int, :required => true
+        arg :changelists, 'Changelist numbers to move.', :short => '-c', :type => :ints, :required => true
         arg :revert, 'Revert before move.', :short => '-r'
         arg :shelve, 'Shelve before move.', :short => '-s'
       end
@@ -25,17 +25,27 @@ module P4Tools
     def initialize(args)
       @args = args
       @p4 = P4Tools.connection
-      @changelist = @args[:changelist]
-      @is_not_empty = !empty_changelist?(@changelist)
+      workspaces = @args[:switch]
+
+      if workspaces
+        validate_workspaces(workspaces)
+
+        @workspaces = Hash[workspaces.permutation.to_a]
+      end
     end
 
     def run
-      shelve
-      revert
+      @args[:changelists].each do |changelist|
+        @changelist = changelist
+        @is_not_empty = !empty_changelist?(@changelist)
 
-      changelist_spec = @p4.fetch_change(@changelist)
-      changelist_spec['Client'] = get_workspace(changelist_spec)
-      @p4.save_change(changelist_spec)
+        shelve
+        revert
+
+        changelist_spec = @p4.fetch_change(@changelist)
+        changelist_spec['Client'] = get_workspace(changelist_spec)
+        @p4.save_change(changelist_spec)
+      end
     end
 
 
@@ -54,26 +64,25 @@ module P4Tools
     end
 
     def get_workspace(changelist_spec)
-      if @args[:switch]
+      if @workspaces
         current = changelist_spec['Client']
-        workspaces = @args[:switch]
+        validate_current(current)
 
-        validate_workspaces(workspaces, current)
-
-        workspaces.delete(current)
-        workspaces.first
+        @workspaces[current]
       else
         @args[:workspace]
       end
     end
 
-    def validate_workspaces(workspaces, current)
+    def validate_current(current_workspace)
+      unless @workspaces.include?(current_workspace)
+        raise(ArgumentError, "The switch parameter does not contains the currently active workspace: #{current_workspace}!")
+      end
+    end
+
+    def validate_workspaces(workspaces)
       if workspaces.length != 2
         raise(ArgumentError, 'The switch parameter need to contains 2 workspace names exactly!')
-      end
-
-      unless workspaces.include?(current)
-        raise(ArgumentError, "The switch parameter does not contains the currently active workspace: #{current}!")
       end
     end
   end
