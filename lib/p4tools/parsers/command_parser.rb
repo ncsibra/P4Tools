@@ -52,7 +52,10 @@ module P4Tools
       }
     end
 
+    # @return [Hash<Symbol, Object>]
     def parse_p4_arguments
+      P4Delegate.help if @raw_args.empty?
+
       args = []
       i = 0
       current = @raw_args[i]
