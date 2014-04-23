@@ -1,6 +1,6 @@
 Gem::Specification.new do |gem|
   gem.name               = 'p4tools'
-  gem.version            = '0.1.3'
+  gem.version            = '0.1.4'
 
   gem.author = 'Norbert Csibra'
   gem.email    = 'napispam@gmail.com'
@@ -9,7 +9,7 @@ Gem::Specification.new do |gem|
   gem.description = 'Simple command line tool to run custom perforce commands. '
   gem.files = `git ls-files`.split($/).delete_if {|file| file =~ %r{^gem/|^lib/commands/custom/}}
   gem.executables   = gem.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  gem.require_paths = 'lib'
+  gem.require_paths = ['lib']
   
   gem.add_runtime_dependency('P4Ruby-mingwx86', '~> 2014.1')
 end
