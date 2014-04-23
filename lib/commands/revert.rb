@@ -5,13 +5,18 @@ module P4Tools
       parameters = []
       parameters.push('-w') if arguments[:delete_added_files]
 
-      if arguments[:changelist]
-        parameters.push('-c').push(arguments[:changelist]).push('//...')
+      if arguments[:changelists]
+        parameters.push('-c').push('').push('//...')
+
+        arguments[:changelists].each do |changelist|
+          parameters[-2] = changelist
+          p4.run_revert(parameters)
+        end
       else
         parameters.push(*arguments[:files])
+        p4.run_revert(parameters)
       end
 
-      p4.run_revert(parameters)
     end
 
     def self.set_options(opts)
@@ -21,7 +26,7 @@ module P4Tools
         help 'Options:'
         help ''
         arg :delete_added_files, 'Delete added files.', :short => '-d'
-        arg :changelist, 'Changelist number.', :short => '-c', :type => :int
+        arg :changelists, 'Changelist numbers.', :short => '-c', :type => :ints
         arg :files, 'The absolute path of the files to delete.', :short => '-f', :type => :strings
       end
     end
