@@ -1,6 +1,8 @@
+require './lib/p4tools/spec'
+
 Gem::Specification.new do |gem|
-  gem.name               = 'p4tools'
-  gem.version            = '0.1.4'
+  gem.name               = P4Tools::PROJECT_NAME
+  gem.version            = P4Tools::VERSION
 
   gem.author = 'Norbert Csibra'
   gem.email    = 'napispam@gmail.com'
