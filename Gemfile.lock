@@ -1,14 +1,13 @@
 GEM
   remote: https://rubygems.org/
+  remote: https://rubygems.herokuapp.com/
   specs:
     P4Ruby-mingwx86 (2014.1)
-    ffi (1.9.0-x86-mingw32)
-    rautomation (0.14.1)
-      ffi (= 1.9.0)
+    rake (0.9.6)
 
 PLATFORMS
   x86-mingw32
 
 DEPENDENCIES
   P4Ruby-mingwx86 (~> 2014.1)
-  rautomation (= 0.14.1)
+  rake (~> 0)

@@ -1,5 +1,6 @@
 # A sample Gemfile
-source "https://rubygems.org"
+source 'https://rubygems.org'
+source 'https://rubygems.herokuapp.com/'
 
-gem 'rautomation', '0.14.1'
 gem 'P4Ruby-mingwx86', '~> 2014.1'
+gem 'rake', '~> 0'
