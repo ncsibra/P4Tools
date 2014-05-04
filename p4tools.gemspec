@@ -14,4 +14,6 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
   
   gem.add_runtime_dependency('P4Ruby-mingwx86', '~> 2014.1')
+
+  gem.add_development_dependency('rake', '~> 0')
 end
