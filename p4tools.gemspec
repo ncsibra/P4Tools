@@ -15,5 +15,5 @@ Gem::Specification.new do |gem|
   
   gem.add_runtime_dependency('P4Ruby-mingwx86', '~> 2014.1')
 
-  gem.add_development_dependency('rake', '~> 0')
+  gem.add_development_dependency('rake')
 end
