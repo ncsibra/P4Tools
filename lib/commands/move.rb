@@ -1,6 +1,5 @@
 module P4Tools
   class Move
-    include CommandUtils
 
     def self.run(arguments)
       Move.new(arguments).run
@@ -37,7 +36,7 @@ module P4Tools
     def run
       @args[:changelists].each do |changelist|
         @changelist = changelist
-        @is_not_empty = !empty_changelist?(@changelist)
+        @is_not_empty = !CommandUtils.empty_changelist?(@changelist)
 
         shelve
         revert
@@ -58,7 +57,7 @@ module P4Tools
     end
 
     def revert
-      if @args[:revert] && @is_not_empty && all_files_shelved?(@changelist, true)
+      if @args[:revert] && @is_not_empty && CommandUtils.all_files_shelved?(@changelist, true)
         @p4.run_revert('-w', '-c', @changelist, '//...')
       end
     end

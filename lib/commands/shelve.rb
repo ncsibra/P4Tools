@@ -12,7 +12,7 @@ module P4Tools
         help ''
         help 'Options:'
         help ''
-        arg :files, 'The absolute path of the files to shelve.', :short => '-f', :type => :strings, :required => true
+        arg :files, 'The absolute path of the files to shelve.', :short => '-f', :type => :strings
         arg :changelist, 'The changelist number to shelve, if not given, then create a new one.', :short => '-c', :type => :int
       end
     end

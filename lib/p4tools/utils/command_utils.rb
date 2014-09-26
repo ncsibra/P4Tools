@@ -6,14 +6,14 @@ module P4Tools
     # @param [Integer] changelist
     # @param [Boolean] check_diff
     # @return [Boolean]
-    def all_files_shelved?(changelist, check_diff=false)
+    def self.all_files_shelved?(changelist, check_diff=false)
       validator = ShelveValidator.new(changelist, check_diff)
       validator.valid?
     end
 
     # @param [Integer] changelist
     # @return [Boolean]
-    def empty_changelist?(changelist)
+    def self.empty_changelist?(changelist)
       p4 = P4Tools.connection
       opened_files = p4.run(%W{ describe -s #{changelist} })[0]['depotFile']
       opened_files.nil?
