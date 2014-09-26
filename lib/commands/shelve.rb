@@ -1,9 +1,17 @@
 module P4Tools
   class Shelve
-    include CommandUtils
 
     def self.run(arguments)
-      Shelve.new(arguments).run
+      if arguments[:checkfiles]
+        p CommandUtils.files_shelved?(arguments[:checkfiles], true)
+      elsif arguments[:checkcls]
+        arguments[:checkcls].each { |cl|
+          shelved = CommandUtils.changelist_shelved?(cl, true)
+          p "#{cl}: #{shelved}"
+        }
+      else
+        Shelve.new(arguments).run
+      end
     end
 
     def self.set_options(opts)
@@ -13,32 +21,31 @@ module P4Tools
         help 'Options:'
         help ''
         arg :files, 'The absolute path of the files to shelve.', :short => '-f', :type => :strings
-        arg :changelist, 'The changelist number to shelve, if not given, then create a new one.', :short => '-c', :type => :int
+        arg :changelist, 'The changelist to shelve.', :short => '-c', :type => :int
+        arg :tochangelist, 'The changelist number to shelve, if not given, then create a new one.', :short => '-t', :type => :int
+        arg :checkfiles, 'Check that all files are shelved.', :short => '-i', :type => :strings
+        arg :checkcls, 'Check that all files are shelved.', :short => '-l', :type => :ints
       end
     end
 
 
     def initialize(args)
-      @files = args[:files]
-      @shelve_changelist = args[:changelist] || create_new_changelist("Shelve container for files:\n\n#{@files.join("\n")}")
+      @files = args[:files] || CommandUtils.opened_files(args[:changelist])
+      @current_changelist = args[:changelist]
+      @shelve_changelist = args[:tochangelist] || CommandUtils.create_new_changelist("Shelve container for files:\n\n#{@files.join("\n")}")
       @p4 = P4Tools.connection
     end
 
     def run
-      current_changelist = get_current_changelist
+      @current_changelist ||= CommandUtils.pending_changelist_for_file(@files.first)
 
       move_to(@shelve_changelist)
       shelve
-      move_to(current_changelist)
+      move_to(@current_changelist)
     end
 
 
     private
-
-    def get_current_changelist
-      file_info = @p4.run_opened('-u', @p4.user, @files.first).first
-      file_info['change']
-    end
 
     def shelve
       @p4.run_shelve('-f', '-c', @shelve_changelist, @files)

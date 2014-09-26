@@ -1,18 +1,22 @@
 module P4Tools
   class ShelveValidator
 
-    def initialize(changelist, check_diff)
-      @changelist = changelist
+    def initialize(files, check_diff)
+      @opened_files = files
       @check_diff = check_diff
     end
 
     # @return [Boolean]
     def valid?
-      @p4 = P4Tools.connection
-      @opened_files = @p4.run(%W{ describe -s #{@changelist} })[0]['depotFile']
-      @shelved_files = @p4.run(%W{ describe -s -S #{@changelist} })[0]['depotFile']
+      if @opened_files.nil?
+        return false
+      end
 
-      @opened_files.nil? || (!@shelved_files.nil? && all_opened_files_shelved? && files_are_identical?)
+      @p4 = P4Tools.connection
+      @cl = CommandUtils.pending_changelist_for_file(@opened_files[0])
+      @shelved_files = CommandUtils.shelved_files(@cl)
+
+      !@shelved_files.nil? && all_opened_files_shelved? && files_are_identical?
     end
 
     private
@@ -27,7 +31,13 @@ module P4Tools
       identical = true
 
       if @check_diff
-        shelve_revisions = @opened_files.map { |file| file + "@=#{@changelist}" }
+        not_deleted_files = []
+        @p4.run_opened(*@opened_files).each { |file|
+          if file['action'] != 'move/delete'
+            not_deleted_files.push(file['depotFile'])
+          end
+        }
+        shelve_revisions = not_deleted_files.map { |file| file + "@=#{@cl}" }
         identical = @p4.run_diff('-Od', *shelve_revisions).empty?
       end
 

@@ -1,6 +1,5 @@
 module P4Tools
   class Revert
-    extend CommandUtils
 
     def self.run(arguments)
       p4 = P4Tools.connection
@@ -12,7 +11,7 @@ module P4Tools
         parameters.push('-c').push('').push('//...')
 
         arguments[:changelists].each do |changelist|
-          if check_shelve && !all_files_shelved?(changelist, true)
+          if check_shelve && !CommandUtils.changelist_shelved?(changelist, true)
               raise(StandardError, "Not all files are shelved in changelist: #{changelist}")
           end
 
@@ -20,8 +19,8 @@ module P4Tools
           p4.run_revert(parameters)
         end
       else
-        if check_shelve
-          raise(ArgumentError, "The check shelve option only works with changelists!")
+        if check_shelve && !CommandUtils.files_shelved?(arguments[:files], true)
+          raise(StandardError, "Not all files are shelved from list: #{arguments[:files]}")
         end
 
         parameters.push(*arguments[:files])

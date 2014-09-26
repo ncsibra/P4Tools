@@ -8,8 +8,7 @@ module P4Tools
       if help?(command)
         help
       else
-        require 'awesome_print'
-        ap @p4.run(command), :indent => 2
+        @p4.run(command)
       end
     end
 

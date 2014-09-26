@@ -57,7 +57,7 @@ module P4Tools
     end
 
     def revert
-      if @args[:revert] && @is_not_empty && CommandUtils.all_files_shelved?(@changelist, true)
+      if @args[:revert] && @is_not_empty && CommandUtils.changelist_shelved?(@changelist, true)
         @p4.run_revert('-w', '-c', @changelist, '//...')
       end
     end
