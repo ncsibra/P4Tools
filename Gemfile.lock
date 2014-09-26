@@ -3,6 +3,7 @@ GEM
   remote: https://rubygems.herokuapp.com/
   specs:
     P4Ruby-mingwx86 (2014.1)
+    awesome_print (1.2.0)
     rake (10.3.1)
 
 PLATFORMS
@@ -10,4 +11,5 @@ PLATFORMS
 
 DEPENDENCIES
   P4Ruby-mingwx86 (~> 2014.1)
+  awesome_print
   rake
