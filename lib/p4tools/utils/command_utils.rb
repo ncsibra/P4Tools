@@ -6,18 +6,15 @@ module P4Tools
     # @param [Array<String>] files
     # @param [Boolean] check_diff
     # @return [Boolean]
-    def self.files_shelved?(files, check_diff=false)
-      validator = ShelveValidator.new(files, check_diff)
-      validator.valid?
+    def self.files_shelved?(files, check_diff=true)
+      ShelveValidator.files_shelved?(files, check_diff)
     end
 
     # @param [Integer] changelist
     # @param [Boolean] check_diff
     # @return [Boolean]
-    def self.changelist_shelved?(changelist, check_diff=false)
-      files = opened_files(changelist)
-      validator = ShelveValidator.new(files, check_diff)
-      validator.valid?
+    def self.changelist_shelved?(changelist, check_diff=true)
+      ShelveValidator.changelist_shelved?(changelist, check_diff)
     end
 
     # @param [Integer] changelist
@@ -47,22 +44,6 @@ module P4Tools
     def self.opened_files(changelist)
       p4 = P4Tools.connection
       p4.run(%W{ describe -s #{changelist} }).first['depotFile']
-    end
-
-    # @param [Integer] changelist
-    # @return [Hash<String, String>]
-    def self.opened_files_by_action(changelist)
-      p4 = P4Tools.connection
-      opened = p4.run(%W{ opened -c #{changelist} })
-
-      actions = {}
-      opened.each { |file|
-        files = actions[file['action']] || []
-        files.push(file['depotFile'])
-        actions[file['action']] = files
-      }
-
-      actions
     end
 
     # @param [String] description
