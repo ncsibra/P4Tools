@@ -2,16 +2,7 @@ module P4Tools
   class Shelve
 
     def self.run(arguments)
-      if arguments[:checkfiles]
-        p CommandUtils.files_shelved?(arguments[:checkfiles], true)
-      elsif arguments[:checkcls]
-        arguments[:checkcls].each { |cl|
-          shelved = CommandUtils.changelist_shelved?(cl, true)
-          p "#{cl}: #{shelved}"
-        }
-      else
-        Shelve.new(arguments).run
-      end
+      Shelve.new(arguments).run
     end
 
     def self.set_options(opts)
@@ -30,22 +21,47 @@ module P4Tools
 
 
     def initialize(args)
-      @files = args[:files] || CommandUtils.opened_files(args[:changelist])
+      @files = args[:files]
       @current_changelist = args[:changelist]
-      @shelve_changelist = args[:tochangelist] || CommandUtils.create_new_changelist("Shelve container for files:\n\n#{@files.join("\n")}")
+      @shelve_changelist = args[:tochangelist]
+      @checkfiles = args[:checkfiles]
+      @checkcls = args[:checkcls]
+
       @p4 = P4Tools.connection
     end
 
     def run
+      if !@files.nil?
+        shelve_to_cl
+      elsif !@changelist.nil?
+        @files = CommandUtils.opened_files(args[:changelist])
+        shelve_to_cl
+      elsif !@checkfiles.nil?
+        check_files(@checkfiles)
+      elsif !@checkcls.nil?
+        check_changelists(@checkcls)
+      end
+    end
+
+    def check_files(files)
+      puts CommandUtils.files_shelved?(files, true)
+    end
+
+    def check_changelists(changelists)
+      changelists.each { |cl|
+        shelved = CommandUtils.changelist_shelved?(cl, true)
+        puts "#{cl}: #{shelved}"
+      }
+    end
+
+    def shelve_to_cl
       @current_changelist ||= CommandUtils.pending_changelist_for_file(@files.first)
+      @shelve_changelist ||= CommandUtils.create_new_changelist("Shelve container for files:\n\n#{@files.join("\n")}")
 
       move_to(@shelve_changelist)
       shelve
       move_to(@current_changelist)
     end
-
-
-    private
 
     def shelve
       @p4.run_shelve('-f', '-c', @shelve_changelist, @files)
