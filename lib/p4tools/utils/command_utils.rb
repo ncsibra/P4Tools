@@ -21,7 +21,7 @@ module P4Tools
     # @return [Boolean]
     def self.empty_changelist?(changelist)
       p4 = P4Tools.connection
-      opened_files = p4.run(%W{ describe -s #{changelist} }).first['depotFile']
+      opened_files = p4.run_describe('-s', changelist).first['depotFile']
       opened_files.nil?
     end
 
@@ -29,21 +29,21 @@ module P4Tools
     # @return [Integer]
     def self.pending_changelist_for_file(file)
       p4 = P4Tools.connection
-      p4.run(%W{ opened #{file} }).first['change']
+      p4.run_opened(file).first['change']
     end
 
     # @param [Integer] changelist
     # @return [Array<String>]
     def self.shelved_files(changelist)
       p4 = P4Tools.connection
-      p4.run(%W{ describe -s -S #{changelist} }).first['depotFile']
+      p4.run_describe('-s', '-S', changelist).first['depotFile']
     end
 
     # @param [Integer] changelist
     # @return [Array<String>]
     def self.opened_files(changelist)
       p4 = P4Tools.connection
-      p4.run(%W{ describe -s #{changelist} }).first['depotFile']
+      p4.run_describe('-s', changelist).first['depotFile']
     end
 
     # @param [String] description
@@ -57,7 +57,7 @@ module P4Tools
           'Description' => description,
       }
 
-      confirmation = p4.run('change', '-i').first
+      confirmation = p4.run_change('-i').first
       confirmation.match(/\d+/)[0]
     end
   end
