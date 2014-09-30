@@ -2,13 +2,13 @@ module P4Tools
   class P4Delegate
 
     def self.run(arguments)
-      @p4 = P4Tools.connection
+      p4 = P4Tools.connection
       command = arguments[:raw]
 
       if help?(command)
         help
       else
-        @p4.run(command)
+        p p4.run(command)
       end
     end
 
