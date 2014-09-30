@@ -28,7 +28,5 @@ module P4Tools
       %w(--help -h).include?(command[0])
     end
 
-    private_class_method :help?
-
   end
 end
