@@ -26,21 +26,25 @@ module P4Tools
 
     def run
       if !@submitted.nil?
-        find_pending
+        numbers = find_pending
+        report(numbers)
       elsif !@pending.nil?
-        find_submitted
+        numbers = find_submitted
+        report(numbers)
       end
     end
 
     def find_submitted
-      @p4.run_describe('-s', '-O', @pending).each { |data|
-        p "pending: #{data['oldChange']}, submitted: #{data['change']}"
-      }
+      @p4.run_describe('-s', '-O', @pending)
     end
 
     def find_pending
-      @p4.run_describe('-s', @submitted).each { |data|
-        p "pending: #{data['oldChange']}, submitted: #{data['change']}"
+      @p4.run_describe('-s', @submitted)
+    end
+
+    def report(numbers)
+      numbers.each { |num|
+        p "pending: #{num['oldChange']}, submitted: #{num['change']}"
       }
     end
 
