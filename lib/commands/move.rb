@@ -22,19 +22,30 @@ module P4Tools
 
 
     def initialize(args)
-      @args = args
+      @workspace = args[:workspace]
+      @switch = args[:switch]
+      @changelists = args[:changelists]
+      @revert = args[:revert]
+      @shelve = args[:shelve]
+
       @p4 = P4Tools.connection
-      workspaces = @args[:switch]
-
-      if workspaces
-        validate_workspaces(workspaces)
-
-        @workspaces = Hash[workspaces.permutation.to_a]
-      end
     end
 
     def run
-      @args[:changelists].each do |changelist|
+      prepare_workspaces
+      move_changelists
+    end
+
+    def prepare_workspaces
+      if @switch
+        validate_workspaces(@switch)
+
+        @workspaces = Hash[@switch.permutation.to_a]
+      end
+    end
+
+    def move_changelists
+      @changelists.each do |changelist|
         @changelist = changelist
         @is_not_empty = !CommandUtils.empty_changelist?(@changelist)
 
@@ -47,17 +58,14 @@ module P4Tools
       end
     end
 
-
-    private
-
     def shelve
-      if @args[:shelve] && @is_not_empty
+      if @shelve && @is_not_empty
         @p4.run_shelve('-f', '-c', @changelist)
       end
     end
 
     def revert
-      if @args[:revert] && @is_not_empty && CommandUtils.changelist_shelved?(@changelist, true)
+      if @revert && @is_not_empty && CommandUtils.changelist_shelved?(@changelist)
         @p4.run_revert('-w', '-c', @changelist, '//...')
       end
     end
@@ -69,7 +77,7 @@ module P4Tools
 
         @workspaces[current]
       else
-        @args[:workspace]
+        @workspace
       end
     end
 

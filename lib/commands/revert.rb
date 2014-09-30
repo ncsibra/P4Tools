@@ -2,31 +2,7 @@ module P4Tools
   class Revert
 
     def self.run(arguments)
-      p4 = P4Tools.connection
-      parameters = []
-      parameters.push('-w') if arguments[:delete_added_files]
-      check_shelve = arguments[:check_shelve]
-
-      if arguments[:changelists]
-        parameters.push('-c').push('').push('//...')
-
-        arguments[:changelists].each do |changelist|
-          if check_shelve && !CommandUtils.changelist_shelved?(changelist, true)
-              raise(StandardError, "Not all files are shelved in changelist: #{changelist}")
-          end
-
-          parameters[-2] = changelist
-          p4.run_revert(parameters)
-        end
-      else
-        if check_shelve && !CommandUtils.files_shelved?(arguments[:files], true)
-          raise(StandardError, "Not all files are shelved from list: #{arguments[:files]}")
-        end
-
-        parameters.push(*arguments[:files])
-        p4.run_revert(parameters)
-      end
-
+      Revert.new(arguments).run
     end
 
     def self.set_options(opts)
@@ -41,5 +17,65 @@ module P4Tools
         arg :files, 'The absolute path of the files to delete.', :short => '-f', :type => :strings
       end
     end
+
+
+    def initialize(args)
+      @delete_added_files = args[:delete_added_files]
+      @check_shelve = args[:check_shelve]
+      @changelists = args[:changelists]
+      @files = args[:files]
+
+      @p4 = P4Tools.connection
+    end
+
+    def run
+      if !@changelists.nil?
+        revert_changelists
+      elsif !@files.nil?
+        revert_files
+      end
+    end
+
+    def revert_files
+      check_shelved_files(@files)
+
+      parameters = []
+      if @delete_added_files
+        parameters.push('-w')
+      end
+
+      parameters.push(*@files)
+      @p4.run_revert(parameters)
+    end
+
+    def revert_changelists
+      parameters = []
+
+      if @delete_added_files
+        parameters.push('-w')
+      end
+
+      parameters.push('-c').push('').push('//...')
+
+      @changelists.each do |changelist|
+        check_shelved_changelist(changelist)
+
+        parameters[-2] = changelist
+        @p4.run_revert(parameters)
+      end
+    end
+
+    def check_shelved_changelist(changelist)
+      if @check_shelve && !CommandUtils.changelist_shelved?(changelist)
+        raise(StandardError, "Not all files are shelved in changelist: #{changelist}")
+      end
+    end
+
+    def check_shelved_files(files)
+      if @check_shelve && !CommandUtils.files_shelved?(files)
+        raise(StandardError, "Not all files are shelved from list: #{files}")
+      end
+    end
+
   end
 end
