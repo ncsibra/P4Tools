@@ -49,19 +49,14 @@ module P4Tools
     end
 
     def revert_changelists
-      parameters = []
-
-      if @delete_added_files
-        parameters.push('-w')
-      end
-
-      parameters.push('-c').push('').push('//...')
-
       @changelists.each do |changelist|
         check_shelved_changelist(changelist)
 
-        parameters[-2] = changelist
-        @p4.run_revert(parameters)
+        if @delete_added_files
+          @p4.run_revert('-w', '-c', changelist, '//...')
+        else
+          @p4.run_revert('-c', changelist, '//...')
+        end
       end
     end
 
