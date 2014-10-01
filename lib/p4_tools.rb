@@ -1,6 +1,5 @@
 require 'P4'
 require_relative 'p4tools/environment'
-require_relative 'p4tools/p4_delegate'
 require_relative 'p4tools/utils/utils'
 require_relative 'p4tools/utils/command_utils'
 require_relative 'p4tools/parsers/command_parser'

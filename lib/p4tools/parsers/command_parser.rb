@@ -26,14 +26,9 @@ module P4Tools
     # @return [void]
     def parse_commands
       while command = @raw_args.shift
-        if command == P4_COMMAND
-          entry = CommandEntry.new(P4Delegate, parse_p4_arguments)
-          @parsed_args.push(entry)
-        else
-          command_module = load_module_for_command(command)
-          entry = CommandEntry.new(command_module, parse_arguments(command_module))
-          @parsed_args.push(entry)
-        end
+        command_module = load_module_for_command(command)
+        entry = CommandEntry.new(command_module, parse_arguments(command_module))
+        @parsed_args.push(entry)
       end
     end
 
@@ -50,24 +45,6 @@ module P4Tools
         raise Trollop::HelpNeeded if ARGV.empty? && options.show_help
         parser.parse @raw_args
       }
-    end
-
-    # @return [Hash<Symbol, Object>]
-    def parse_p4_arguments
-      P4Delegate.help if @raw_args.empty?
-
-      args = []
-      i = 0
-      current = @raw_args[i]
-
-      begin
-        i += 1
-        args.push(current)
-        current = @raw_args[i]
-      end while !SUB_COMMANDS.include?(current) && i < @raw_args.length
-
-      @raw_args = @raw_args[i .. -1]
-      {:raw => args}
     end
 
     # @param [String] command
