@@ -15,7 +15,6 @@ module P4Tools
     entries = CommandParser.new(args).parse
     global_arguments = entries.shift.arguments
 
-    setup_perforce_config(global_arguments[:p4config])
     create_perforce_connection
 
     begin
@@ -30,13 +29,10 @@ module P4Tools
   def self.set_options(opts)
     opts.set do
       help 'Simple command line tool to run custom perforce actions through subcommands.'
-      help 'For more information, please check the help page of the command.'
+      help 'For more information, please check the help page of the subcommand.'
       help ''
       help "Available subcommands are:\n  #{SUB_COMMANDS.join("\n  ")}"
       help ''
-      help 'Global options:'
-      help ''
-      arg :p4config, 'Absolute path of the P4CONFIG file.', :short => '-p', :type => :string
     end
   end
 
@@ -65,18 +61,7 @@ module P4Tools
         command.run(arguments)
       end
     end
-
-    # @param [String] config_path
-    # @return [void]
-    def setup_perforce_config(config_path)
-      if config_path
-        ENV['P4CONFIG'] = config_path
-      elsif ENV['P4CONFIG'].nil?
-        ENV['P4CONFIG'] = CONFIG_ROOT + '/p4.ini'
-      end
-    end
   end
-
 
   if __FILE__ == $PROGRAM_NAME
     run
