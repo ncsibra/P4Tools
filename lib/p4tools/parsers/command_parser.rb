@@ -26,9 +26,13 @@ module P4Tools
     # @return [void]
     def parse_commands
       while command = @raw_args.shift
-        command_module = load_module_for_command(command)
-        entry = CommandEntry.new(command_module, parse_arguments(command_module))
-        @parsed_args.push(entry)
+        if SUB_COMMANDS.include?(command)
+          command_module = load_module_for_command(command)
+          entry = CommandEntry.new(command_module, parse_arguments(command_module))
+          @parsed_args.push(entry)
+        else
+          raise(ArgumentError, "The following subcommand does not exist: '#{command}'")
+        end
       end
     end
 
