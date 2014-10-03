@@ -7,14 +7,30 @@ module P4Tools
     # @param [Boolean] check_diff
     # @return [Boolean]
     def self.files_shelved?(files, check_diff=true)
-      ShelveValidator.files_shelved?(files, check_diff)
+      ShelveValidator.new.find_unshelved_files(files, check_diff).empty?
     end
 
     # @param [Integer] changelist
     # @param [Boolean] check_diff
     # @return [Boolean]
     def self.changelist_shelved?(changelist, check_diff=true)
-      ShelveValidator.changelist_shelved?(changelist, check_diff)
+      files = opened_files(changelist)
+      ShelveValidator.new.find_unshelved_files(files, check_diff).empty?
+    end
+
+    # @param [Array<String>] files
+    # @param [Boolean] check_diff
+    # @return [Array<String>]
+    def self.unshelved_files(files, check_diff=true)
+      ShelveValidator.new.find_unshelved_files(files, check_diff)
+    end
+
+    # @param [Integer] changelist
+    # @param [Boolean] check_diff
+    # @return [Array<String>]
+    def self.unshelved_files_in_changelist(changelist, check_diff=true)
+      files = opened_files(changelist)
+      ShelveValidator.new.find_unshelved_files(files, check_diff)
     end
 
     # @param [Integer] changelist
