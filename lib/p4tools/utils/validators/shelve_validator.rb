@@ -1,20 +1,8 @@
 module P4Tools
   class ShelveValidator
 
-    # @return [Boolean]
-    def self.files_shelved?(files, check_diff)
-      ShelveValidator.new.shelved?(files, check_diff)
-    end
-
-    # @return [Boolean]
-    def self.changelist_shelved?(changelist, check_diff)
-      files = CommandUtils.opened_files(changelist)
-      ShelveValidator.new.shelved?(files, check_diff)
-    end
-
-
-    # @return [Boolean]
-    def shelved?(files, check_diff)
+    # @return [Array<String>]
+    def find_unshelved_files(files, check_diff)
       return false if files.nil?
 
       @opened_files = files
@@ -24,17 +12,26 @@ module P4Tools
       @cl = CommandUtils.pending_changelist_for_file(@opened_files[0])
       @shelved_files = CommandUtils.shelved_files(@cl)
 
-      !@shelved_files.nil? && all_opened_files_shelved? && files_are_identical?
+      if @shelved_files.nil?
+        return files
+      end
+
+      unshelved_files = find_not_shelved_files
+      unless unshelved_files.empty?
+        return unshelved_files
+      end
+
+      find_diff_files
     end
 
     # @return [Boolean]
-    def all_opened_files_shelved?
-      (@opened_files - @shelved_files).empty?
+    def find_not_shelved_files
+      @opened_files - @shelved_files
     end
 
     # @return [Boolean]
-    def files_are_identical?
-      return true unless @check_diff
+    def find_diff_files
+      return [] unless @check_diff
 
       shelve_revisions = []
       @p4.run_opened(*@opened_files).each { |file|
@@ -43,7 +40,7 @@ module P4Tools
         end
       }
 
-      @p4.run_diff('-Od', *shelve_revisions).empty?
+      @p4.run_diff('-f', '-se', *shelve_revisions)
     end
 
     def deleted?(file)
