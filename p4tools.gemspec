@@ -12,8 +12,9 @@ Gem::Specification.new do |gem|
   gem.files = `git ls-files`.split($/).delete_if {|file| file =~ %r{^gem/|^lib/commands/custom/}}
   gem.executables   = gem.files.grep(%r{^bin/}) { |f| File.basename(f) }
   gem.require_paths = ['lib']
+  gem.license = 'GPL-2'
   
   gem.add_runtime_dependency('P4Ruby-mingwx86', '~> 2014.1')
 
-  gem.add_development_dependency('rake')
+  gem.add_development_dependency('rake', '~> 0')
 end
