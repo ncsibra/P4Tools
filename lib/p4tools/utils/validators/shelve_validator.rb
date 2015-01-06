@@ -17,14 +17,9 @@ module P4Tools
       end
 
       unshelved_files = find_not_shelved_files
-      unless unshelved_files.empty?
-        return unshelved_files
-      end
-
-      find_diff_files
+      unshelved_files + find_diff_files
     end
 
-    # @return [Boolean]
     def find_not_shelved_files
       @opened_files - @shelved_files
     end
@@ -35,16 +30,16 @@ module P4Tools
 
       shelve_revisions = []
       @p4.run_opened(*@opened_files).each { |file|
-        unless deleted?(file)
+        if edited?(file)
           shelve_revisions.push("#{file['depotFile']}@=#{@cl}")
         end
       }
 
-      @p4.run_diff('-f', '-se', *shelve_revisions)
+      @p4.run_diff('-f', '-se', *shelve_revisions).collect { |d| d['depotFile'] }
     end
 
-    def deleted?(file)
-      file['action'].include?('delete')
+    def edited?(file)
+      file['action'].include?('edit')
     end
 
   end
