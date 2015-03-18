@@ -28,14 +28,23 @@ module P4Tools
     def find_diff_files
       return [] unless @check_diff
 
+      diff_files = []
       shelve_revisions = []
-      @p4.run_opened(*@opened_files).each { |file|
-        if edited?(file)
-          shelve_revisions.push("#{file['depotFile']}@=#{@cl}")
-        end
-      }
+      files_to_check = @opened_files & @shelved_files
 
-      @p4.run_diff('-f', '-se', *shelve_revisions).collect { |d| d['depotFile'] }
+      unless files_to_check.empty?
+        @p4.run_opened(*files_to_check).each { |file|
+          if edited?(file)
+            shelve_revisions.push("#{file['depotFile']}@=#{@cl}")
+          end
+        }
+
+        unless shelve_revisions.empty?
+          diff_files = @p4.run_diff('-f', '-se', *shelve_revisions).collect { |d| d['depotFile'] }
+        end
+      end
+
+      diff_files
     end
 
     def edited?(file)
